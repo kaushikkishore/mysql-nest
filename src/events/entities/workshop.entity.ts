@@ -13,6 +13,7 @@ export class Workshop {
   end: string;
 
   @Column({ type: 'integer', default: null })
+  @ManyToOne((type) => Event, (event) => event.name)
   eventId: number;
 
   @Column()

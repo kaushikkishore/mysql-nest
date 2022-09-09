@@ -94,12 +94,16 @@ export class EventsService {
     // Approch
     // Run group by in the workshop table and get the event ID
     // Get all the event IDs by ID where workshop is available.
-    const result = await this.eventRepository.query(
-      'SELECT eventId , count(eventId) from workshop group by eventId having count(eventId) > 0',
-    );
+    // const result = await this.eventRepository.query(
+    //   'SELECT eventId , count(eventId) from workshop group by eventId having count(eventId) > 0',
+    // );
+
+    // return this.eventRepository.query(
+    //   'SELECT * FROM workshop where id in (whatever we got from the result)',
+    // );
 
     return this.eventRepository.query(
-      'SELECT * FROM workshop where id in (whatever we got from the result)',
+      `SELECT e.*, w.* FROM event e inner join workshop w  on e.id = w.eventId where e.id in (SELECT eventId from workshop group by eventId having count(eventId) > 0)`,
     );
   }
 
