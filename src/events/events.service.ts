@@ -91,7 +91,16 @@ export class EventsService {
 
   @Get('events')
   async getEventsWithWorkshops() {
-    throw new Error('TODO task 1');
+    // Approch
+    // Run group by in the workshop table and get the event ID
+    // Get all the event IDs by ID where workshop is available.
+    const result = await this.eventRepository.query(
+      'SELECT eventId , count(eventId) from workshop group by eventId having count(eventId) > 0',
+    );
+
+    return this.eventRepository.query(
+      'SELECT * FROM workshop where id in (whatever we got from the result)',
+    );
   }
 
   /*
@@ -162,6 +171,30 @@ export class EventsService {
 
   @Get('futureevents')
   async getFutureEventWithWorkshops() {
-    throw new Error('TODO task 2');
+    // Get the first workshop of the event
+
+    // Not sure why the relationship is not added in the entity
+    // @OneToMany() - in event
+    // @ManyToOne() - in workshop
+
+    // What is first workshop of the event is not clear
+    //
+    /**
+     First query workshop table  
+     - Group by - eventId and get min of startDate and having filter greater than today 
+     - This will give the response of all the eventIds 
+     - Get those eventIds and get all the event and workshop using inner join and filter By ID 
+
+     This whole process can be achieved by either using a temp table or using a subquery. 
+     
+     SELECT eventId FROM workshop group by eventId having min(start) >  '2022-09-09' 
+     
+     SELECT e.*, w.* 
+     FROM event e inner join workshop w on w.eventId = e.Id
+     WHERE e.Id In ( SELECT eventId FROM workshop group by eventId having min(start) >  '2022-09-09'  )
+     */
+
+    //
+    return this.eventRepository.createQueryBuilder();
   }
 }
